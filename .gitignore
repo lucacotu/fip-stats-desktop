@@ -1,0 +1,20 @@
+# Dipendenze
+node_modules/
+
+# Output del build (installer, .app)
+dist/
+
+# macOS
+.DS_Store
+
+# Log
+*.log
+npm-debug.log*
+
+# File temporanei / di lavoro
+_to_delete/
+.impeccable/
+*.tmp
+
+# Eventuale stato locale (non deve mai finire nel repo)
+store.json
