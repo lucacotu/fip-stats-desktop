@@ -1,0 +1,44 @@
+{
+  "name": "fip-stats-desktop",
+  "productName": "FIP Stats Desktop",
+  "version": "1.0.0",
+  "description": "Client desktop non ufficiale per i dati di FIP Stats (pallacanestro FIP / NBN23)",
+  "main": "main.js",
+  "private": true,
+  "author": "FIP Stats Desktop",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --mac --arm64",
+    "dist:dmg": "electron-builder --mac dmg --arm64",
+    "build": "electron-builder --mac --arm64"
+  },
+  "devDependencies": {
+    "electron": "33.4.11",
+    "electron-builder": "25.1.8"
+  },
+  "build": {
+    "appId": "local.fipstats.desktop",
+    "productName": "FIP Stats Desktop",
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    },
+    "files": ["main.js", "preload.js", "src/**", "renderer/**"],
+    "mac": {
+      "target": [
+        { "target": "dmg", "arch": "arm64" },
+        { "target": "zip", "arch": "arm64" }
+      ],
+      "category": "public.app-category.sports",
+      "icon": "build/icon.png"
+    },
+    "dmg": {
+      "title": "FIP Stats Desktop",
+      "contents": [
+        { "x": 140, "y": 200, "type": "file" },
+        { "x": 400, "y": 200, "type": "link", "path": "/Applications" }
+      ]
+    }
+  }
+}
