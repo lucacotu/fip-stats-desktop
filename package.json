@@ -9,9 +9,9 @@
   "license": "MIT",
   "scripts": {
     "start": "electron .",
-    "dist": "electron-builder --mac --arm64",
-    "dist:dmg": "electron-builder --mac dmg --arm64",
-    "build": "electron-builder --mac --arm64"
+    "dist": "electron-builder",
+    "dist:mac": "electron-builder --mac",
+    "dist:win": "electron-builder --win"
   },
   "devDependencies": {
     "electron": "33.4.11",
@@ -27,11 +27,12 @@
     "files": ["main.js", "preload.js", "src/**", "renderer/**"],
     "mac": {
       "target": [
-        { "target": "dmg", "arch": "arm64" },
-        { "target": "zip", "arch": "arm64" }
+        { "target": "dmg", "arch": "universal" },
+        { "target": "zip", "arch": "universal" }
       ],
       "category": "public.app-category.sports",
-      "icon": "build/icon.png"
+      "icon": "build/icon.png",
+      "artifactName": "FIP-Stats-Desktop-${version}-${arch}.${ext}"
     },
     "dmg": {
       "title": "FIP Stats Desktop",
@@ -39,6 +40,19 @@
         { "x": 140, "y": 200, "type": "file" },
         { "x": 400, "y": 200, "type": "link", "path": "/Applications" }
       ]
+    },
+    "win": {
+      "target": [
+        { "target": "nsis", "arch": "x64" }
+      ],
+      "icon": "build/icon.png",
+      "artifactName": "FIP-Stats-Desktop-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "artifactName": "FIP-Stats-Desktop-Setup-${version}.${ext}"
     }
   }
 }

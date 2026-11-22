@@ -1,7 +1,7 @@
 # FIP Stats Desktop
 
 Client **desktop non ufficiale** per i dati di **FIP Stats** (statistiche della pallacanestro
-FIP, piattaforma NBN23), per macOS. Replica e amplia le funzioni dell'app mobile ufficiale
+FIP, piattaforma NBN23), per **macOS e Windows**. Replica e amplia le funzioni dell'app mobile ufficiale
 usandone le stesse API, così da poter consultare i dati comodamente dal Mac — con il **proprio
 account** FIP Stats (incluso l'account Gold, se posseduto).
 
@@ -41,24 +41,29 @@ account** FIP Stats (incluso l'account Gold, se posseduto).
 
 ## Installazione (consigliata, senza terminale)
 
-Se nella sezione **[Releases](../../releases)** del repository è presente il file
-`FIP Stats Desktop-1.0.0-arm64.dmg`:
+Scarica il file adatto al tuo sistema dalla sezione **[Releases](../../releases)** del repository.
 
-1. Scarica il `.dmg`.
-2. Fai doppio clic per aprirlo e **trascina** l'icona *FIP Stats Desktop* nella cartella
-   **Applicazioni**.
-3. Apri l'app dalla cartella Applicazioni. **Al primo avvio**, siccome l'app non è firmata con
-   un certificato Apple a pagamento, macOS chiede conferma: fai **clic destro sull'app → Apri**,
-   poi di nuovo **Apri** nella finestra che compare. Da quel momento parte con un normale doppio clic.
+### macOS (Intel e Apple Silicon)
 
-> Richiede un **Mac con chip Apple (M1 o successivi)**.
->
+1. Scarica `FIP-Stats-Desktop-1.0.0-universal.dmg` (va bene sia per i Mac con chip Apple sia per quelli Intel).
+2. Fai doppio clic per aprirlo e **trascina** l'icona *FIP Stats Desktop* nella cartella **Applicazioni**.
+3. Apri l'app dalla cartella Applicazioni. **Al primo avvio**, siccome l'app non è firmata con un
+   certificato Apple a pagamento, macOS chiede conferma: fai **clic destro sull'app → Apri**, poi di
+   nuovo **Apri** nella finestra che compare. Da quel momento parte con un normale doppio clic.
+
 > Se macOS dicesse che l'app *«è danneggiata e non può essere aperta»* (succede con le app non
 > firmate scaricate da internet), rimuovi la quarantena una volta sola da Terminale:
 > ```
 > xattr -dr com.apple.quarantine "/Applications/FIP Stats Desktop.app"
 > ```
-> e riapri l'app. È l'unico caso in cui serve il Terminale, e solo per questo passaggio.
+> e riapri l'app.
+
+### Windows
+
+1. Scarica `FIP-Stats-Desktop-Setup-1.0.0.exe`.
+2. Avvia l'installer e segui la procedura (puoi scegliere la cartella di installazione).
+3. **Al primo avvio** Windows SmartScreen può mostrare *«Windows ha protetto il PC»* (l'app non è
+   firmata): fai clic su **Ulteriori informazioni → Esegui comunque**. Da quel momento parte normalmente.
 
 ---
 
@@ -71,23 +76,36 @@ npm install     # installa le dipendenze (Electron, electron-builder)
 npm start       # avvia l'app in modalità sviluppo
 ```
 
-## Creare l'installer (.dmg) da sé
+## Creare gli installer da sé
 
-Dalla cartella del progetto, su un **Mac con chip Apple**:
+Ogni installer si costruisce **sul sistema operativo corrispondente** (gli strumenti di
+packaging sono specifici di ogni piattaforma):
 
 ```bash
 npm install
-npm run dist
+npm run dist        # costruisce per il sistema su cui lo lanci
+# oppure, esplicitamente:
+npm run dist:mac    # su macOS  → dist/FIP-Stats-Desktop-1.0.0-universal.dmg (+ .zip)
+npm run dist:win    # su Windows → dist/FIP-Stats-Desktop-Setup-1.0.0.exe
 ```
 
-Al termine trovi in `dist/`:
+- Su **macOS** il build produce un pacchetto *universal* (Intel + Apple Silicon in un solo file).
+  L'app viene firmata *ad-hoc* automaticamente (nessun Apple Developer ID richiesto).
+- Su **Windows** il build produce un installer NSIS (`.exe`).
 
-- `FIP Stats Desktop-1.0.0-arm64.dmg` — l'installer da distribuire (doppio clic → trascina in Applicazioni);
-- `FIP Stats Desktop-1.0.0-arm64-mac.zip` — l'app già pronta (scompatti e trascini in Applicazioni).
+### Build automatico per tutte le piattaforme (GitHub Actions)
 
-> Il build dell'installer per macOS funziona **solo su macOS** (usa gli strumenti di sistema
-> `hdiutil`/`codesign`). L'app viene firmata *ad-hoc* automaticamente: è ciò che permette
-> l'apertura con clic destro → Apri, pur non essendo firmata con un Apple Developer ID.
+Il repository include un workflow (`.github/workflows/release.yml`) che costruisce
+**automaticamente** gli installer macOS e Windows in cloud e li allega alla Release. Non serve
+possedere entrambe le macchine. Per usarlo:
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+GitHub avvia il build su un runner macOS e uno Windows e, al termine, pubblica i due installer
+nella Release del tag. Si può anche lanciare a mano dalla scheda **Actions → Build & Release → Run workflow**.
 
 ---
 
@@ -105,7 +123,10 @@ fip-stats-desktop/
 │  ├─ app.js
 │  └─ styles.css
 ├─ build/
-│  └─ icon.png        # icona dell'app (electron-builder la converte in .icns)
+│  └─ icon.png        # icona dell'app (electron-builder genera .icns per Mac e .ico per Windows)
+├─ .github/
+│  └─ workflows/
+│     └─ release.yml  # build automatico mac+win e pubblicazione nella Release
 └─ package.json
 ```
 
